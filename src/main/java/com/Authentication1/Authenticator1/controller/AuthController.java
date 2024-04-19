@@ -1,5 +1,6 @@
 package com.Authentication1.Authenticator1.controller;
 
+import com.Authentication1.Authenticator1.model.User;
 import com.Authentication1.Authenticator1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,13 +19,12 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<String> authenticateUser(@RequestBody UserCredentials credentials) {
-        String userId = credentials.getUserId();
-        String password = credentials.getPassword();
-
-        if (userService.authenticateUser(userId, password)) {
-            return ResponseEntity.ok( "Authentication success");
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody UserCredentials credentials) {
+        User user = userService.authenticateUser(credentials.getEmail(), credentials.getPassword());
+        if (user != null) {
+            user.setPassword(null); // Ensure password is not returned
+            return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
         }
@@ -32,15 +32,15 @@ public class AuthController {
 
     // Inner class to represent user credentials received from the client
     static class UserCredentials {
-        private String userId;
+        private String email;
         private String password;
 
-        public String getUserId() {
-            return userId;
+        public String getEmail() {
+            return email;
         }
 
-        public void setUserId(String userId) {
-            this.userId = userId;
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         public String getPassword() {

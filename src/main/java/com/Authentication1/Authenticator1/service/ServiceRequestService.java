@@ -15,6 +15,7 @@ public class ServiceRequestService {
     public ServiceRequest createOrUpdateServiceRequest(ServiceRequest serviceRequest) {
         if (serviceRequest.getServiceCreationDate() == null) {
             serviceRequest.setServiceCreationDate(new Date());
+            //serviceRequest.setCreatorEmail();
         }
         return repository.save(serviceRequest);
     }
